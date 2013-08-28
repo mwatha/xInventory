@@ -7,18 +7,97 @@ def start
   manufacturers = []
   projects = []
   suppliers = []
+
+
+  donors_hash = {}
+  manufacturers_hash = {}
+  projects_hash = {}
+  suppliers_hash = {}
+  categories_hash = {}
+  
   donor_project = {}
   category_type = {}
   
-  csv_text = FasterCSV.read("/home/mwatha/Desktop/items.csv")
+  csv_text = FasterCSV.read('/home/mwatha/Desktop/One-up/items2.csv',:col_sep => "\t")
   (csv_text || []).each do |line|
-    categories << line[5].titleize
-    manufacturers << line[6].titleize
-    projects << line[9].titleize
-    donors << line[10].titleize
-    suppliers << line[11].titleize
-    donor_project[line[9].titleize] = line[10].titleize
-    category_type[line[1].titleize] = line[5].titleize
+    category = line[5].titleize.squish
+    category = 'Computer' if category == "Computor"
+    categories << category
+
+    manufacturer = line[6].titleize.squish
+    if manufacturer.match(/zebra/i)
+      manufacturer = 'Zebra Technologies Corporation'
+    elsif manufacturer.match(/J2/i)
+      manufacturer = 'J2 Retail Systems'
+    elsif manufacturer.match(/Symbol/i)
+      manufacturer = 'Symbol Technologies Inc'
+    end
+    manufacturers << manufacturer
+
+    project = line[9].titleize.squish
+    if project == 'Cdc'
+      project = 'Center For Disease Control'
+    elsif project.match(/kch/i)
+      project = project.gsub('Kch','KCH')
+    elsif project.match(/Opd/i)
+      project = project.gsub('Opd','OPD')
+      project = project.gsub('opd','OPD')
+    elsif project.match(/Cdc/i)
+      project = project.gsub('Cdc','CDC')
+    elsif project.match(/pih/i)
+      project = project.gsub('Pih','PIH')
+    elsif project.match(/Mpc/i)
+      project = project.gsub('Mpc','MPC')
+    elsif project == 'Dm'
+      project = 'DM'
+    elsif project == 'Dm/Amu5'
+      project = 'DM/Amu5'
+    elsif project.match(/Qech/i)
+      project = project.gsub('Qech','QECH')
+    elsif project.match(/Pmtct/i)
+      project = project.gsub('Pmtct','PMTCT')
+    elsif project == 'Tb Upgrade'
+      project = 'TB Upgrade'
+    end
+    projects << project
+
+
+
+    donor = line[10].titleize.squish
+    if donor == 'Com'
+      donor = "College Of Medicine"
+    elsif donor == 'Lh' or donor == 'Ligthouse'
+      donor = "Lighthouse"
+    elsif donor == 'Pih' 
+      donor = "Partners In Hope"
+    elsif donor == 'Cdc'
+      donor = 'Center For Disease Control'
+    end
+    donors << donor
+
+
+    supplier = line[11].titleize.squish
+    if supplier.match(/Gov/)
+      supplier = "Gov Connections"
+    elsif supplier.match(/Kipoint/)
+      supplier = "Kipoint Enterprise Co. Ltd"
+    elsif supplier.match(/Print/)
+      supplier = "Print House"
+    end
+    suppliers << supplier
+
+
+    asset_name = line[1].titleize.squish
+    asset_id = line[0].to_i
+
+    donor_project[project] = donor
+    category_type[asset_name] = category
+  
+    donors_hash[asset_id] = donor
+    manufacturers_hash[asset_id] = manufacturer
+    projects_hash[asset_id] = project
+    suppliers_hash[asset_id] = supplier
+    categories_hash[asset_id] = category
   end
 
   categories = categories.uniq
@@ -64,9 +143,10 @@ def start
   end
 
   sites = []
-  csv_location = FasterCSV.read("/home/mwatha/Desktop/statuses.csv")
+  csv_location = FasterCSV.read('/home/mwatha/Desktop/One-up/statuses.csv',:col_sep => "\t")
   (csv_location || []).each do |line|
     next if line[5].match(/room/i)
+    next if line[5].match(/Office/i)
     sites << line[5].titleize
   end
   
@@ -84,30 +164,32 @@ def start
 
   (csv_text || []).each do |line|
     Item.transaction do                                                         
+      asset_csv_file_id = line[0].to_i
+
       next if line[0].to_i == 0                                                  
       item = Item.new()        
       item.id = line[0].to_i                                                  
       item.name = line[1].titleize                  
-      item.category_type = Category.where("name = ?",category_type[item.name])[0].id 
-      item.brand = Manufacturer.where("name = ?",line[6].titleize)[0].id                           
+      item.category_type = Category.where("name = ?",categories_hash[asset_csv_file_id])[0].id 
+      item.brand = Manufacturer.where("name = ?",manufacturers_hash[asset_csv_file_id])[0].id                           
       item.version = 'Unkown'                         
       item.serial_number = line[3]
-      item.vendor = Supplier.where("name = ?",line[11].titleize)[0].id                                 
+      item.vendor = Supplier.where("name = ?",suppliers_hash[asset_csv_file_id])[0].id                                 
       item.model = line[2]                           
-      item.project_id = Project.where("name = ?",line[9].titleize)[0].id
-      item.donor_id = Donor.where("name = ?",line[10].titleize)[0].id                         
-      item.purchased_date = line[17].to_date rescue Date.today          
+      item.project_id = Project.where("name = ?",projects_hash[asset_csv_file_id])[0].id
+      item.donor_id = Donor.where("name = ?",donors_hash[asset_csv_file_id])[0].id                         
+      item.purchased_date = line[17].gsub('+AC0','').to_date rescue Date.today          
       item.order_number = "Unkown"
       item.current_quantity = 1
       item.bought_quantity = 1
       item.cost = rand(500.99)
       item.currency_id = 2
-      item.date_of_receipt = line[7].to_date rescue Date.today
+      item.date_of_receipt = line[7].gsub('+AC0','').to_date rescue Date.today
       item.delivered_by = "Unkown"                
       item.status_on_delivery = status_on_delivery
       item.location = 1
       if not line[4].blank?     
-        item.barcode = line[4].upcace                                                        
+        item.barcode = line[4].upcase                                                        
       end
 
       if item.save                                                              
@@ -116,7 +198,7 @@ def start
         curr_state.current_state = status_on_delivery
         curr_state.save
       end
-      puts "asset: #{item.name} ..............................#{count -= 1}"
+      puts "..............................#{count -= 1}"
     end
   end
 
@@ -124,7 +206,7 @@ def start
 
   #dispatched items.
 
-  csv_location = FasterCSV.read("/home/mwatha/Desktop/statuses.csv")
+  csv_location = FasterCSV.read('/home/mwatha/Desktop/One-up/statuses.csv',:col_sep => "\t")
   (csv_location || []).each do |line|
     next unless line[2].match(/item out/i)
     next if line[1].match(/item/i)
