@@ -377,7 +377,7 @@ EOF
   def assign_barcode
     last_barcode = Item.select("MAX(barcode) barcode")[0].try(:barcode) rescue 'BHT'
     number = last_barcode.sub("BHT",'').to_i 
-    return "BHT#{(number + 1).to_s.rjust(10,"0")}"
+    return "BHT#{(number + 1).to_s.rjust(6,"0")}"
   end
 
 end
