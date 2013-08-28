@@ -93,6 +93,7 @@ class AssetsController < ApplicationController
       item.delivered_by = params[:organisation]['delivered_by']
       item.status_on_delivery = params[:organisation]['delivery_status']
       item.location = params[:organisation]['location']
+      item.barcode = assign_barcode
 
       asset_lifespan = (params[:asset]['lifespan']).to_i rescue 0
       if asset_lifespan > 0
@@ -371,6 +372,12 @@ EOF
       :expiry_date => asset.expiry_date,
       :current_state => StateType.find(asset.current_state.current_state).name
     }
+  end
+
+  def assign_barcode
+    last_barcode = Item.select("MAX(barcode) barcode")[0].try(:barcode) rescue 'BHT'
+    number = last_barcode.sub("BHT",'').to_i 
+    return "BHT#{(number + 1).to_s.rjust(10,"0")}"
   end
 
 end
