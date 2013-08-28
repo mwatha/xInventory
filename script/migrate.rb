@@ -106,6 +106,10 @@ def start
       item.delivered_by = "Unkown"                
       item.status_on_delivery = status_on_delivery
       item.location = 1
+      if not line[4].blank?     
+        item.barcode = line[4].upcace                                                        
+      end
+
       if item.save                                                              
         curr_state = ItemState.new()                                            
         curr_state.item_id = item.id                                            
