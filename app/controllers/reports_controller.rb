@@ -2,6 +2,17 @@ class ReportsController < ApplicationController
   def show
   end
 
+  def expire
+    if params[:type] == 'expired'
+      expired = true
+      @report_title = "Expired assets"
+    else
+      expired = false
+      @report_title = "Assets expiring in the next 6 months"
+    end
+    @data = get_expired_assets(expired)
+  end
+
   def list_of_items_bought_in
     @donors = Donor.order("name ASC").collect{|donor|[donor.name,donor.id]}
   end
@@ -451,9 +462,6 @@ EOF
       assets = Item.where("purchased_date >= ? 
         AND purchased_date <=? AND (donor_id = ? AND category_type = ?)",
         start_date,end_date,donor,category)
-
-
-
     elsif donor.blank? and project.blank? and category.blank? and not name == 'All (asset name)'
       assets = Item.where("purchased_date >= ? 
         AND purchased_date <=? AND (name = ?)",start_date,end_date,name)
@@ -481,21 +489,6 @@ EOF
       assets = Item.where("purchased_date >= ? 
         AND purchased_date <=? AND (name = ? AND donor_id = ? AND project_id = ?
         AND category_type =?)",start_date,end_date,name,donor,project,category)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     else
       assets = Item.where("purchased_date >= ? 
         AND purchased_date <=?",start_date,end_date)
@@ -567,4 +560,69 @@ EOF
     return @html
   end 
   
+  def get_expired_assets(expired = true)
+    if expired
+      data = Item.where("expiry_date <= CURRENT_DATE() AND
+      expiry_date IS NOT NULL").order("expiry_date DESC , name ASC")
+    else
+      data = Item.where("DATEDIFF(expiry_date,CURRENT_DATE())            
+      BETWEEN 1 AND 183 AND expiry_date IS NOT NULL").order("expiry_date DESC , name ASC")
+    end
+
+    return nil if data.blank?
+    total_cost = 0
+
+    @html =<<EOF
+  <table id='search_results' class='table table-striped table-bordered table-condensed'>
+  <thead>                                                                       
+  <tr id = 'table_head'>                                                        
+    <th id="th3" style="width:200px;">Asset</th>                                 
+    <th id="th1" style="width:200px;">Serial number</th>                        
+    <th id="th4" style="width:200px;">Model</th>                             
+    <th id="th5" style="width:200px;">Purchase date</th>                                
+    <th id="th8" style="width:150px;">Donor</th>                             
+    <th id="th8" style="width:150px;">Project</th>                             
+    <th id="th8" style="width:150px;">Supplier</th>                             
+    <th id="th8" style="width:150px;">Expiry date</th>                             
+    <th id="th8" style="width:150px;">Current quantity</th>                             
+  </tr>                                                                         
+  </thead>                                                                      
+  <tbody id='results'>  
+EOF
+
+    (data).each do |asset|  
+      asset_name = asset.name
+      location = Site.find(asset.location).name
+      purchase_date = asset.purchased_date
+      donor = Donor.find(asset.donor_id).name
+      project = Project.find(asset.project_id).name
+      supplier = Supplier.find(asset.vendor).name
+      expiry_date = asset.expiry_date.to_date.strftime('%b %Y')
+      quantity = asset.current_quantity
+      cost = asset.cost
+      asset_model = asset.version
+      serial_num = asset.serial_number
+    @html +=<<EOF
+      <tr>                                                                        
+      <td>#{asset_name}</td>                                       
+      <td>#{serial_num}</td>                                       
+      <td>#{asset_model}</td>                                       
+      <td>#{purchase_date}</td>                                       
+      <td>#{donor}</td>                                       
+      <td>#{project}</td>                                       
+      <td>#{supplier}</td>                                       
+      <td>#{expiry_date}</td>                                       
+      <td>#{quantity}</td>                                       
+    </tr>
+EOF
+    end
+
+    @html +=<<EOF
+      </tbody>                                                                      
+  </table>                                                                      
+EOF
+
+    return @html
+  end
+
 end
