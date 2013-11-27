@@ -90,10 +90,6 @@
               <ul class="nav main-links">
                 <li class="active"><a href="/">Home</a></li>
                 <li><a href="/assets">assets</a></li>                           
-                <li><a href="/projects">projects</a></li>                       
-                <li><a href="/donors">donor</a></li>                            
-                <li><a href="/suppliers">suppliers</a></li>                     
-                <li><a href="/manufacturers">manufacturer</a></li>              
                 <li><a href="/dispatch_receive" id="dispatch_receive">dispatch/receive </a></li>
                 <%unless admin?%>                                               
                   <script>                                                      
@@ -111,6 +107,11 @@
                         <%end%>                                                 
                         <li class="divider"></li>                               
                         <%if admin?%>                                           
+                          <li><a href="/projects"><i class="icon-search"></i>projects</a></li>
+                          <li><a href="/donors"><i class="icon-search"></i>donor</a></li>
+                          <li><a href="/suppliers"><i class="icon-search"></i>suppliers</a></li>
+                          <li><a href="/manufacturers"><i class="icon-search"></i>manufacturer</a></li>
+                          <li class="divider"></li>                             
                           <li><a href="/new_user"><i class="icon-search"></i>add users</a></li>
                           <li><a href="<%=settings_url(:id => 'edit_users')%>"><i class="icon-search"></i>edit users</a></li>
                           <li><a href="<%=settings_url(:id => 'remove_users')%>"><i class="icon-search"></i>remove users</a></li>
