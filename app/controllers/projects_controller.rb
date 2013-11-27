@@ -1,6 +1,16 @@
 class ProjectsController < ApplicationController
   before_filter :check_authorized
 
+   def index                                                                     
+                                                                                
+    @application = [                                                            
+      ["Find project(s)","/project_search","default.png"],                          
+      ["Create a project","/create_new_project","default.png"]                   
+    ]                                                                           
+                                                                                
+    @buttons_count = @application.length                                        
+  end   
+
   def show
     @project = Project.find(params[:id])
     @donor = Donor.find(@project.donor)

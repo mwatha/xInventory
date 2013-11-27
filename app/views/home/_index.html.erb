@@ -1,0 +1,78 @@
+<script>                                                                        
+                                                                                
+function loadButtons(){                                                         
+<%                                                                              
+count = 0                                                                       
+(@application || []).each do |name,path,image|
+  name1 = nil ; name2 = nil
+
+  if name.length <= 30
+    name1 = name
+  elsif name.length > 30 
+    name1 = name[0..29]
+    name2 = name[30..-1]
+  end
+
+%>                                
+  b = document.getElementById('button'+(<%=count+=1%>));                        
+  b.innerHTML = '<div style="width: 200px; text-align: center; padding: 10px;">';
+  b.innerHTML += '<a href="<%=path%>"><img src="assets/<%=image%>" /></a>';     
+  b.innerHTML += '<div class="folder_names">' + "<%=name1%>" + '</div></a></div>'                     
+  <%unless name2.blank?%>
+    b.innerHTML += '<div class="folder_names">' + "<%=name2%>" + '</div></a></div>'                     
+  <%end%>
+<%end%>                                                                         
+}                                                                               
+                                                                                
+</script>
+
+
+<style>
+
+  #parent_table img {                                                           
+    width: 120px;                                                               
+    height: 120px;                                                              
+  }                      
+  
+  .folder_names {
+    font-style: normal;
+    font-weight: bold;
+    line-height: 1.24;
+    color: rgb(68, 68, 68);
+    font-family: arial,sans-serif;
+
+  }                                                       
+</style>
+
+
+
+
+<body onload="loadButtons();">
+
+<table id="parent_table" width="100%" cellspacing="0" cellpadding="10">         
+  <tr>                                                                          
+    <td colspan="6" style="padding: 0px;">                                      
+                                                                                
+        <table style="width:100%" class="buttons-table">                        
+          <%                                                                    
+             count = 0                                                          
+             1.upto(@buttons_count).each do |number|%>                          
+              <tr>                                                              
+                <td id='button<%=count+=1%>'></td>                              
+                <td id='button<%=count+=1%>'></td>                              
+                <td id='button<%=count+=1%>'></td>                              
+                <td id='button<%=count+=1%>'></td>                              
+              </tr>                                                             
+          <%end%>                                                               
+        </table>                                                                
+                                                                                
+    </td>                                                                       
+  </tr>                                                                         
+  <tr>                                                                          
+    <td colspan="6" style="border-top: 1px solid #5496ef;">                     
+      &nbsp;                                                                    
+    </td>                                                                       
+  </tr>                                                                         
+</table>
+
+</body>

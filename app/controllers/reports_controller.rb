@@ -2,6 +2,22 @@ class ReportsController < ApplicationController
   def show
   end
 
+   def index                                                                    
+                                                                                
+    @application = [                                                            
+      ["List of items bought in", '/items_bought_in' ,"default.png"],     
+      ["List of dispatched assets", '/dispatched_assets' ,"default.png"],     
+      ["Itemized list of stock balances per Donor/Site/project", '/stock_balances' ,"default.png"],     
+      ["Item(s) transferred between Donor/project", '/transfers' ,"default.png"],     
+      ["Advanced stock balances", '/advanced_stock_balances' ,"default.png"],     
+      ["Assets expiring in the next 6 months", '/expire?type=six-months' ,"default.png"],     
+      ["Expired asset(s)", '/expire?type=expired' ,"default.png"],     
+      ["Register a manufacturer","/create_new_manufacturer","default.png"]      
+    ]                                                                           
+                                                                                
+    @buttons_count = @application.length                                        
+  end    
+
   def expire
     if params[:type] == 'expired'
       expired = true

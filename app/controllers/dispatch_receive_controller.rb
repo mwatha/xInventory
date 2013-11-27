@@ -2,6 +2,19 @@ class DispatchReceiveController < ApplicationController
   skip_before_filter  :verify_authenticity_token , :only => ['asset_transfers','process_transfer']
   before_filter :check_authorized
 
+   def index                                                                     
+                                                                                
+    @application = [                                                            
+      ["Dispatch assets", assets_to_url(:id => 'dispatch') ,"default.png"],           
+      ["Receive assets", assets_to_url(:id => 'receive') ,"default.png"],           
+      ['Transfer assets', '/transfer_assets_search' ,"default.png"],           
+      ["Reimburse asset(s)", '/borrowed_assets' ,"default.png"],           
+      ["Register a manufacturer","/create_new_manufacturer","default.png"]      
+    ]                                                                           
+                                                                                
+    @buttons_count = @application.length                                        
+  end
+ 
   def reimburse_create
     Reimbursed.transaction do 
       reimburse = Reimbursed.new

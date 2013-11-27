@@ -1,6 +1,16 @@
 class DonorsController < ApplicationController
   before_filter :check_authorized
 
+  def index                                                                    
+                                                                                
+    @application = [                                                            
+      ["Find donor(s)","/donor_search","default.png"],                      
+      ["Add a donor","/create_new_donor","default.png"]                  
+    ]                                                                           
+                                                                                
+    @buttons_count = @application.length                                        
+  end
+
   def show
     @donor = Donor.find(params[:id])
   end

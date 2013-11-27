@@ -1,5 +1,15 @@
 class ManufacturerController < ApplicationController
   before_filter :check_authorized
+
+  def index                                                                     
+                                                                                
+    @application = [                                                            
+      ["Find manufacturer(s)","/manufacturers_search","default.png"],                    
+      ["Register a manufacturer","/create_new_manufacturer","default.png"]              
+    ]                                                                           
+                                                                                
+    @buttons_count = @application.length                                        
+  end 
   
   def show
     @manufacturer = Manufacturer.find(params[:id])

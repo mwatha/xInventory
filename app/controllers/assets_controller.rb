@@ -1,6 +1,20 @@
 class AssetsController < ApplicationController
   before_filter :check_authorized
 
+  def index
+
+    @application = [                                                            
+      ["Find asset(s)","/asset_search","default.png"],                              
+      ["Register an asset","/create_new_asset","default.png"],                              
+      ["Find asset categories","/asset_categories","default.png"],                              
+      ["Create asset category","/create_new_category","default.png"],                              
+      ["Find asset states","/asset_states_search","default.png"],                              
+      ["Create asset state","/create_new_state","default.png"]                                 
+    ] 
+
+    @buttons_count = @application.length
+  end
+
   def show
     @asset = get_asset(params[:id])
 

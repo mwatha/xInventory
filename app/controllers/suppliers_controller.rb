@@ -1,6 +1,16 @@
 class SuppliersController < ApplicationController
   before_filter :check_authorized
 
+  def index                                                                     
+                                                                                
+    @application = [                                                            
+      ["Find supplier(s)","/supplier_search","default.png"],                          
+      ["Register a supplier","/create_new_supplier","default.png"]                         
+    ]                                                                           
+                                                                                
+    @buttons_count = @application.length                                        
+  end 
+
   def show
     @supplier = Supplier.find(params[:id])
   end
