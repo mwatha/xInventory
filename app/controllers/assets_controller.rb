@@ -381,7 +381,7 @@ EOF
       :date_of_receipt => asset.date_of_receipt.strftime('%d %B %Y'),
       :delivered_by => asset.delivered_by,
       :status_on_delivery => StateType.find(asset.status_on_delivery).name,
-      :location => Site.find(asset.location).name , 
+      :location => asset.current_location.name , 
       :asset_id => asset.id,
       :expiry_date => asset.expiry_date,
       :current_state => StateType.find(asset.current_state.current_state).name
