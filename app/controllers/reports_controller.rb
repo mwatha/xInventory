@@ -11,8 +11,7 @@ class ReportsController < ApplicationController
       ["Item(s) transferred between Donor/project", '/transfers' ,"default.png"],     
       ["Advanced stock balances", '/advanced_stock_balances' ,"default.png"],     
       ["Assets expiring in the next 6 months", '/expire?type=six-months' ,"default.png"],     
-      ["Expired asset(s)", '/expire?type=expired' ,"default.png"],     
-      ["Register a manufacturer","/create_new_manufacturer","default.png"]      
+      ["Expired asset(s)", '/expire?type=expired' ,"default.png"]
     ]                                                                           
                                                                                 
     @buttons_count = @application.length                                        
