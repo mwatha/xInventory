@@ -23,6 +23,13 @@ gem 'fastercsv'
 
 gem 'passenger'
 
+gem 'nokogiri', '1.5.0'
+
+#gem 'roo', '0.0.1'
+
+#gem 'rubyzip' ,'0.5.7'
+gem 'spreadsheet' , '0.8.9'
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
