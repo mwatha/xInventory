@@ -110,10 +110,12 @@ class DispatchReceiveController < ApplicationController
        dispatch.responsible_person = params[:dispatch]['collected_by'] 
        dispatch.location_id = params[:dispatch]['location']
        dispatch.quantity = params[:dispatch]['quantity']
+       asset.location = dispatch.location_id
        unless params[:dispatch]['reason'].blank?
          dispatch.reason = params[:dispatch]['reason']
        end
-       if dispatch.save             
+       if dispatch.save 
+         asset.save            
          curr_state = ItemState.where(:'item_id' => asset.id).first    
          curr_state.current_state = StateType.find(params[:dispatch]['status']).id
          curr_state.save
@@ -150,11 +152,13 @@ class DispatchReceiveController < ApplicationController
        dispatch.responsible_person = params[:receive]['collected_by'] 
        dispatch.location_id = params[:receive]['location']
        dispatch.quantity = params[:receive]['quantity']
+       asset.location = dispatch.location_id
        unless params[:receive]['reason'].blank?
          dispatch.reason = params[:receive]['reason']
        end
 
        if dispatch.save  
+         asset.save
          curr_state = ItemState.where(:'item_id' => asset.id).first    
          curr_state = StateType.find(params[:receive]['status']).id
          curr_state.save

@@ -192,12 +192,14 @@ def dispatched_asset(item,date_dispatched, dispatcher, location, quantity, reaso
     dispatch.approved_by = "User One"               
     dispatch.responsible_person = dispatcher       
     dispatch.location_id = get_location(location)                 
+    asset.location = dispatch.location_id
     dispatch.quantity = quantity                       
     unless reason.blank?                                
       dispatch.reason = reason                       
     end
                                                                       
     if dispatch.save                                                         
+      asset.save
       curr_state = ItemState.where(:'item_id' => asset.id).first             
       curr_state.current_state = StateType.where("name ='Good Condition'").last.id
       curr_state.save                                                        
