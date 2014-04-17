@@ -319,12 +319,6 @@ class DispatchReceiveController < ApplicationController
     }                                                                           
   end
                                                                          
-  def check_authorized                                                          
-    unless admin?                                                             
-      redirect_to '/home'                                                   
-    end                                                                       
-  end
-
   def get_assets(options = {})
     @assets = {}             
     if options.blank?                                                   

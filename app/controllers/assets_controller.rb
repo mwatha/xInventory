@@ -1,5 +1,5 @@
 class AssetsController < ApplicationController
-  before_filter :check_authorized
+  before_filter :check_auth
 
   def show
     @asset = get_asset(params[:id])
@@ -336,7 +336,7 @@ EOF
   end
                                               
                                                                                 
-  def check_authorized                                                          
+  def check_auth
     if action_name == 'new' or action_name == 'create' or 
         action_name == 'new_category' or action_name == 'create_category' or
         action_name == 'create_state' or action_name == 'new_state'

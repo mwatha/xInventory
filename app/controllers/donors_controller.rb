@@ -41,14 +41,4 @@ class DonorsController < ApplicationController
     @donors = Donor.order('Name ASC')
   end
 
-  private                                                                       
-                                                                                
-  def check_authorized                                                          
-    if action_name == 'new' or action_name == 'create'                          
-      unless admin?                                                             
-        redirect_to '/donors'                                            
-      end                                                                       
-    end                                                                         
-  end
-
 end

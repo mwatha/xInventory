@@ -90,15 +90,28 @@
               <ul class="nav main-links">
                 <li class="active"><a href="/">Home</a></li>
                 <li><a href="/assets">assets</a></li>                           
-                <li><a href="/projects">projects</a></li>                       
-                <li><a href="/donors">donor</a></li>                            
-                <li><a href="/suppliers">suppliers</a></li>                     
-                <li><a href="/manufacturers">manufacturer</a></li>              
+                <li><a href="/projects" id="project">projects</a></li>                       
+                <li><a href="/donors" id="donor">donor</a></li>                            
+                <li><a href="/suppliers" id="supplier">suppliers</a></li>                     
+                <li><a href="/manufacturers" id="manufacturer">manufacturer</a></li>              
                 <li><a href="/dispatch_receive" id="dispatch_receive">dispatch/receive </a></li>
                 <%unless admin?%>                                               
                   <script>                                                      
                     document.getElementById("dispatch_receive").href = '#';     
                     document.getElementById("dispatch_receive").style.color = "grey"
+
+                    document.getElementById("project").href = '#';     
+                    document.getElementById("project").style.color = "grey"
+
+                    document.getElementById("donor").href = '#';     
+                    document.getElementById("donor").style.color = "grey"
+
+                    document.getElementById("supplier").href = '#';     
+                    document.getElementById("supplier").style.color = "grey"
+
+                    document.getElementById("manufacturer").href = '#';     
+                    document.getElementById("manufacturer").style.color = "grey"
+
                   </script>                                                     
                 <%end%>                                                         
                 <li><a href="/reports">reports</a></li>                         

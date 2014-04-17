@@ -13,7 +13,7 @@
   <p>                                                                           
     <%= link_to "Find asset(s)", '/asset_search', :class => 'btn btn-primary btn-large buttons' %>
   </p>                                                                          
-                                                                                
+  <%if admin? %>                                                                                
   <p>                                                                           
     <%= link_to "Register an asset", '/create_new_asset', :class => 'btn btn-primary btn-large buttons' %>
   </p>
@@ -33,5 +33,6 @@
   <p>                                                                           
     <%= link_to "Create asset state", '/create_new_state', :class => 'btn btn-primary btn-large buttons' %>
   </p>
+  <%end%>
 </section> 
 

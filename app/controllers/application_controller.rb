@@ -6,6 +6,13 @@ class ApplicationController < ActionController::Base
   def admin?                                                                    
     User.current_user.user_roles.map(&:role).include?('admin')                  
   end
+
+  def check_authorized
+    unless admin?
+      redirect_to '/'
+    end
+  end
+
                                                                                  
   protected                                                                     
                                                                                 
