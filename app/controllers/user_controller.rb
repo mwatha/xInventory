@@ -95,7 +95,7 @@ class UserController < ApplicationController
         user.username = params[:user]['username']                                                         
       end
 
-      unless params[:user]['username'].blank? 
+      unless params[:user]['password'].blank? 
         user.password_hash = params[:user]['password']                                         
       end
       user.save                                                                       
