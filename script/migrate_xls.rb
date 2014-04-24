@@ -28,12 +28,45 @@ def start
   (book.rows || []).each_with_index do |row, i|
     next if i < 1
     next if row[0].blank?
-    category = row[0].squish.titleize 
+    if row[0].match(/monitor/i)
+      category = 'Monitor'
+    elsif row[0].match(/Printer/i)
+      category = 'Printer'
+    elsif row[0].match(/Battery charger/i)
+      category = 'Battery charger'
+    elsif row[0].match(/Router/i)
+      category = 'Network router'
+    elsif row[0].match(/routerboard/i)
+      category = 'Router board'
+    elsif row[0].match(/router board/i)
+      category = 'Router board'
+    elsif row[0].match(/scanner/i)
+      category = 'Scanner'
+    elsif row[0].match(/Network switch/i)
+      category = 'Network switch'
+    elsif row[0].match(/tablet/i)
+      category = 'Tablet'
+    else
+      category = row[0].squish.titleize rescue 'Unknown'
+    end rescue category = 'Unknown'
+ 
+    if row[8].match(/lighthouse/i) 
+      donor = 'Lighthouse'
+    elsif row[8].squish.titleize.upcase == 'LH'
+      donor = 'Lighthouse'
+    else
+      donor = row[8].squish.titleize rescue 'Unknown'
+    end rescue donor = 'Unknown'
+ 
+    if row[5].match(/Storeroom/i) 
+      site = 'Storeroom (LL)'
+    else
+      site = row[5].squish.titleize rescue 'Unknown'
+    end rescue site = 'Unknown'
+ 
     manufacturer =  row[2].squish.titleize rescue 'Unknown'
-    donor = row[8].squish.titleize rescue 'Unknown'
     project = row[9].squish.titleize rescue 'Unknown'
     supplier = row[4].squish.titleize rescue 'Unknown'
-    site = row[5].squish.titleize rescue 'Unknown'
 
     categories << category
     manufacturers << manufacturer
@@ -123,13 +156,14 @@ def start
   end
 
   (sites || []).each do |name|
+    next if name.match(/Storeroom/i)
     site = Site.new()
     site.name = name.titleize
     site.save
     puts "Site:  #{name.titleize}"
   end
 
-  baobab_office = Site.where(:name => 'Storeroom')[0].id
+  baobab_office = Site.where(:name => 'Storeroom (LL)')[0].id
 
   asset_count = assets.length
   (assets || []).each do |asset_id, attr|
@@ -139,20 +173,20 @@ def start
       item.name = attr[:name].titleize                  
       item.category_type = Category.where("name = ?", attr[:category])[0].id 
       item.brand = Manufacturer.where("name = ?", attr[:manufacturer])[0].id                           
-      item.version = 'Unkown'                         
-      item.serial_number = attr[:serial_number]
+      item.version = 'Unknown'                         
+      item.serial_number = validate_serial_number(attr[:serial_number])
       item.vendor = Supplier.where("name = ?", attr[:supplier])[0].id                                 
       item.model = attr[:model]
       item.project_id = Project.where("name = ?", attr[:project])[0].id
       item.donor_id = Donor.where("name = ?", attr[:donor])[0].id                         
       item.purchased_date = '2000-01-01'.to_date      
-      item.order_number = "Unkown"
+      item.order_number = "Unknown"
       item.current_quantity = 1
       item.bought_quantity = 1
       item.cost = attr[:cost]
       item.currency_id = 2
       item.date_of_receipt = '2000-01-01'.to_date 
-      item.delivered_by = "Unkown"                
+      item.delivered_by = "Unknown"                
       item.status_on_delivery = StateType.where(:name => attr[:condition])[0].id
       item.location = baobab_office
       item.barcode = assign_barcode 
@@ -176,7 +210,7 @@ def start
     item = Item.find(asset_id) rescue nil
     next if item.blank?
     
-    dispatched_asset(item, attr[:dispatched_date], 'Unkown', attr[:site], 1, attr[:notes])
+    dispatched_asset(item, attr[:dispatched_date], 'Unknown', attr[:site], 1, attr[:notes])
     puts "dispatched asset ......... #{item.name}"
   end
 
@@ -228,6 +262,14 @@ def assign_barcode
   return "BHT#{(number + 1).to_s.rjust(6,"0")}"
 end
 
+def validate_serial_number(serial_number)
+  i = Item.where(:serial_number => serial_number)
+  return serial_number if i.blank?
+
+  chars = ('A'..'Z').to_a + (0..9).to_a
+  size = 16
+  return (0...size).collect { chars[Kernel.rand(chars.length)] }.join 
+end
 
 
 start
